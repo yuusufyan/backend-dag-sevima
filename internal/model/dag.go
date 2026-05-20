@@ -3,6 +3,7 @@ package model
 import (
 	"time"
 
+	"github.com/yuusufyan/go-common/pkg/database"
 	"gorm.io/datatypes"
 )
 
@@ -14,8 +15,7 @@ type DagTemplate struct {
 	Description string         `gorm:"type:text"`
 	// Definition contains the raw JSON structure of the DAG (nodes and edges)
 	Definition  datatypes.JSON `gorm:"type:jsonb"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	database.AuditModel
 }
 
 // DagExecution tracks a single execution instance of a DagTemplate.
@@ -29,8 +29,7 @@ type DagExecution struct {
 	Error         string         `gorm:"type:text"`
 	StartedAt     *time.Time
 	CompletedAt   *time.Time
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
+	database.AuditModel
 
 	Template DagTemplate `gorm:"foreignKey:DagTemplateID"`
 }
@@ -49,8 +48,7 @@ type TaskInstance struct {
 	RetryCount     int            `gorm:"default:0"`
 	StartedAt      *time.Time
 	CompletedAt    *time.Time
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	database.AuditModel
 
 	Execution DagExecution `gorm:"foreignKey:DagExecutionID"`
 }
