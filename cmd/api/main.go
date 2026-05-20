@@ -8,6 +8,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
+	"backend-sevima/internal/handler"
 	"backend-sevima/internal/middleware"
 	
 	"github.com/joho/godotenv"
@@ -76,7 +77,12 @@ func main() {
 	// API Routes
 	api := app.Group("/api/v1")
 
-	// Apply Custom Auth Guard (extracts X-Tenant-ID)
+	// Public Routes
+	authHandler := handler.NewAuthHandler(db)
+	api.Post("/auth/login", authHandler.Login)
+
+	// Protected Routes
+	// Apply Custom Auth Guard (verifies JWT & extracts Tenant ID)
 	api.Use(middleware.AuthGuard)
 
 	// Start server
