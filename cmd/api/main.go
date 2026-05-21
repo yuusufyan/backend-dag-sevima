@@ -8,9 +8,9 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"backend-sevima/internal/handler"
-	"backend-sevima/internal/middleware"
-	
+	model "backend-sevima/internal/models"
+	"backend-sevima/internal/routing"
+
 	"github.com/joho/godotenv"
 
 	"github.com/yuusufyan/go-common/pkg/database"
@@ -19,6 +19,15 @@ import (
 	"github.com/yuusufyan/go-common/pkg/utils"
 )
 
+// @title SEVIMA Backend API
+// @version 1.0
+// @description This is the API documentation for SEVIMA Backend.
+// @host localhost:3000
+// @BasePath /api/v1
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
 func main() {
 	// Load .env if it exists
 	_ = godotenv.Load()
@@ -48,6 +57,20 @@ func main() {
 		appLogger.WithError(err).Warn("Failed to connect to database. DAG Engine will not work until DB is configured.")
 	} else {
 		appLogger.Info("Successfully connected to database")
+
+		// AutoMigrate Database Models
+		err = db.AutoMigrate(
+			&model.Tenant{},
+			&model.User{},
+			&model.DagTemplate{},
+			&model.DagExecution{},
+			&model.TaskInstance{},
+		)
+		if err != nil {
+			appLogger.WithError(err).Error("Failed to auto migrate database models")
+		} else {
+			appLogger.Info("Database models migrated successfully")
+		}
 	}
 
 	app := fiber.New(fiber.Config{
@@ -75,15 +98,7 @@ func main() {
 	utils.RegisterHealthCheck(app, db, rdb)
 
 	// API Routes
-	api := app.Group("/api/v1")
-
-	// Public Routes
-	authHandler := handler.NewAuthHandler(db)
-	api.Post("/auth/login", authHandler.Login)
-
-	// Protected Routes
-	// Apply Custom Auth Guard (verifies JWT & extracts Tenant ID)
-	api.Use(middleware.AuthGuard)
+	routing.SetupRoutes(app, db)
 
 	// Start server
 	go func() {

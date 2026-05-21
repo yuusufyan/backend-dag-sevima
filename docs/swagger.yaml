@@ -1,0 +1,147 @@
+basePath: /api/v1
+definitions:
+  backend-sevima_internal_services.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  backend-sevima_internal_services.LoginResponse:
+    properties:
+      tenant_id:
+        type: string
+      token:
+        type: string
+      user_id:
+        type: string
+    type: object
+  backend-sevima_internal_services.RegisterRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      tenant_name:
+        type: string
+    type: object
+  backend-sevima_internal_services.RegisterResponse:
+    properties:
+      tenant_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  response.Common:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      meta: {}
+      status:
+        type: string
+    type: object
+  response.Response-backend-sevima_internal_services_LoginResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/backend-sevima_internal_services.LoginResponse'
+      message:
+        type: string
+      meta: {}
+      status:
+        type: string
+    type: object
+  response.Response-backend-sevima_internal_services_RegisterResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/backend-sevima_internal_services.RegisterResponse'
+      message:
+        type: string
+      meta: {}
+      status:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: This is the API documentation for SEVIMA Backend.
+  title: SEVIMA Backend API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user against the database and returns a JWT
+      parameters:
+      - description: Login Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend-sevima_internal_services.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response-backend-sevima_internal_services_LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Common'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Common'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Common'
+      summary: User Login
+      tags:
+      - Authentication
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new tenant and a new admin user within a transaction
+      parameters:
+      - description: Register Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend-sevima_internal_services.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Response-backend-sevima_internal_services_RegisterResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Common'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Common'
+      summary: User Registration
+      tags:
+      - Authentication
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
