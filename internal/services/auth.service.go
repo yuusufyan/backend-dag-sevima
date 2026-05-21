@@ -71,8 +71,8 @@ func (s *AuthService) Login(req LoginRequest) (*LoginResponse, error) {
 
 	return &LoginResponse{
 		Token:    tokenString,
-		UserID:   user.ID,
-		TenantID: user.TenantID,
+		UserID:   user.ID.String(),
+		TenantID: user.TenantID.String(),
 	}, nil
 }
 
@@ -88,7 +88,7 @@ type RegisterResponse struct {
 }
 
 func (s *AuthService) Register(req RegisterRequest) (*RegisterResponse, error) {
-	if req.TenantName == "" || req.Email == "" || req.Password == "" {
+	if req.Email == "" || req.Password == "" {
 		return nil, apperror.BadRequest("Tenant name, email, and password are required")
 	}
 
@@ -123,7 +123,7 @@ func (s *AuthService) Register(req RegisterRequest) (*RegisterResponse, error) {
 	tx.Commit()
 
 	return &RegisterResponse{
-		TenantID: tenant.ID,
-		UserID:   user.ID,
+		TenantID: tenant.ID.String(),
+		UserID:   user.ID.String(),
 	}, nil
 }

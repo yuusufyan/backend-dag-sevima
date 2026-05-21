@@ -1,5 +1,14 @@
 basePath: /api/v1
 definitions:
+  backend-sevima_internal_services.CreateTenantRequest:
+    properties:
+      is_active:
+        type: boolean
+      name:
+        type: string
+    required:
+    - name
+    type: object
   backend-sevima_internal_services.LoginRequest:
     properties:
       email:
@@ -30,6 +39,13 @@ definitions:
       tenant_id:
         type: string
       user_id:
+        type: string
+    type: object
+  backend-sevima_internal_services.UpdateTenantRequest:
+    properties:
+      is_active:
+        type: boolean
+      name:
         type: string
     type: object
   response.Common:
@@ -138,6 +154,187 @@ paths:
       summary: User Registration
       tags:
       - Authentication
+  /tenants:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all tenants in the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Common'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Common'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Common'
+      security:
+      - Bearer: []
+      summary: Get all tenants
+      tags:
+      - Tenant
+    post:
+      consumes:
+      - application/json
+      description: Create a new tenant in the system
+      parameters:
+      - description: Create Tenant Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend-sevima_internal_services.CreateTenantRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Common'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Common'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Common'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Common'
+      security:
+      - Bearer: []
+      summary: Create a new tenant
+      tags:
+      - Tenant
+  /tenants/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a tenant from the system
+      parameters:
+      - description: Tenant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Common'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Common'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Common'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Common'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Common'
+      security:
+      - Bearer: []
+      summary: Delete a tenant
+      tags:
+      - Tenant
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a specific tenant's details
+      parameters:
+      - description: Tenant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Common'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Common'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Common'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Common'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Common'
+      security:
+      - Bearer: []
+      summary: Get a tenant by ID
+      tags:
+      - Tenant
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing tenant
+      parameters:
+      - description: Tenant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Tenant Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/backend-sevima_internal_services.UpdateTenantRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Common'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Common'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Common'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Common'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Common'
+      security:
+      - Bearer: []
+      summary: Update an existing tenant
+      tags:
+      - Tenant
 securityDefinitions:
   Bearer:
     description: Type "Bearer" followed by a space and JWT token.

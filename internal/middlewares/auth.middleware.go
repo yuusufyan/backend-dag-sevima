@@ -56,5 +56,10 @@ func AuthGuard(c *fiber.Ctx) error {
 		c.Locals("user_id", sub)
 	}
 
+	// Extract role
+	if role, ok := claims["role"].(string); ok {
+		c.Locals("role", role)
+	}
+
 	return c.Next()
 }

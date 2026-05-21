@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 
 	model "backend-sevima/internal/models"
 	"backend-sevima/internal/routing"
@@ -82,6 +83,11 @@ func main() {
 	})
 
 	// Global Middleware
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+		AllowMethods: "GET, POST, HEAD, PUT, DELETE, PATCH, OPTIONS",
+	}))
 	app.Use(commonfiber.Telemetry())
 	app.Use(commonfiber.Recover(appLogger))
 	app.Use(commonfiber.Logger(appLogger))

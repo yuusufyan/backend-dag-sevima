@@ -3,24 +3,25 @@ package model
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/yuusufyan/go-common/pkg/database"
 	"gorm.io/datatypes"
 )
 
 // DagTemplate stores the definition of a DAG.
 type DagTemplate struct {
-	ID          string         `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	TenantID    string         `gorm:"index;not null"`
-	Name        string         `gorm:"size:255;not null"`
-	Description string         `gorm:"type:text"`
+	ID          uuid.UUID `gorm:"type:uuid;column:create_by" json:"create_by"`
+	TenantID    string    `gorm:"index;not null"`
+	Name        string    `gorm:"size:255;not null"`
+	Description string    `gorm:"type:text"`
 	// Definition contains the raw JSON structure of the DAG (nodes and edges)
-	Definition  datatypes.JSON `gorm:"type:jsonb"`
+	Definition datatypes.JSON `gorm:"type:jsonb"`
 	database.AuditModel
 }
 
 // DagExecution tracks a single execution instance of a DagTemplate.
 type DagExecution struct {
-	ID            string         `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	ID            uuid.UUID      `gorm:"type:uuid;column:create_by" json:"create_by"`
 	TenantID      string         `gorm:"index;not null"`
 	DagTemplateID string         `gorm:"type:uuid;index;not null"`
 	Status        string         `gorm:"size:50;not null"` // PENDING, RUNNING, SUCCESS, FAILED
@@ -36,7 +37,7 @@ type DagExecution struct {
 
 // TaskInstance tracks the execution of a single Task within a DagExecution.
 type TaskInstance struct {
-	ID             string         `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	ID             uuid.UUID      `gorm:"type:uuid;column:create_by" json:"create_by"`
 	TenantID       string         `gorm:"index;not null"`
 	DagExecutionID string         `gorm:"type:uuid;index;not null"`
 	NodeID         string         `gorm:"size:255;not null"` // ID of the node in the DAG definition
